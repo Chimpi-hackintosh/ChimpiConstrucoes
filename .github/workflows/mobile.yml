@@ -1,0 +1,68 @@
+name: Chimpi-hackintosh · Compilar celular
+on:
+  push:
+    paths:
+      - 'native/**'
+      - 'dist/**'
+      - 'packaging/build_ios.py'
+      - 'packaging/prepare_android.py'
+      - '.github/workflows/mobile.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Preparar recursos
+        run: python3 packaging/prepare_android.py
+      - name: Conferir SDK
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-35" "build-tools;35.0.0"'
+      - name: Compilar APK
+        working-directory: native/android
+        run: gradle assembleDebug --no-daemon
+      - name: Verificar assinatura e empacotar
+        run: |
+          mkdir -p build-output
+          cp native/android/app/build/outputs/apk/debug/app-debug.apk build-output/ChimpiConstrucoes-1.0.0-Android.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs build-output/ChimpiConstrucoes-1.0.0-Android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChimpiConstrucoes-Android
+          path: build-output/*.apk
+          if-no-files-found: error
+          retention-days: 30
+  ios:
+    name: iOS e simulador
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compilar para aparelho e simulador
+        run: python packaging/build_ios.py
+      - name: Verificar executáveis
+        run: |
+          file build-output/iOS-unsigned/Payload/ChimpiConstrucoes.app/ChimpiConstrucoes
+          file build-output/iOS-Simulator/ChimpiConstrucoes.app/ChimpiConstrucoes
+          codesign --verify --verbose build-output/iOS-Simulator/ChimpiConstrucoes.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChimpiConstrucoes-iOS
+          path: |
+            build-output/*.ipa
+            build-output/*Simulator*.zip
+          if-no-files-found: error
+          retention-days: 30

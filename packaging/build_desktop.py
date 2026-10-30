@@ -33,6 +33,9 @@ if (root / "LICENSE").exists():
     shutil.copy2(root / "LICENSE", staging / "LICENSE.txt")
 if any(staging.rglob("*.py")) or any(staging.rglob("*.pyw")):
     raise SystemExit("Unexpected Python source file in release staging")
+if sys.platform == "darwin":
+    subprocess.run(["codesign", "--force", "--deep", "--sign", "-", "--timestamp=none", str(out / "ChimpiConstrucoes.app")], check=True)
+    subprocess.run(["codesign", "--verify", "--deep", "--verbose", str(out / "ChimpiConstrucoes.app")], check=True)
 print(f"Staging ready: {staging}")
 if args.installer:
     if sys.platform != "win32":

@@ -15,6 +15,8 @@ As compilações ficam na aba **Actions**, no resultado **Chimpi-hackintosh · C
 - **Windows x64:** EXE com runtime incluído, ZIP e instalador NSIS
 - **Linux x64:** binário com runtime incluído, distribuído em TAR.GZ
 - **macOS:** bundle APP em ZIP, na arquitetura indicada pelo artefato
+- **Android:** APK de teste, assinado com chave de desenvolvimento
+- **iOS:** IPA sem assinatura para assinatura posterior, e APP de simulador
 - **Python portátil:** `python desktop/launcher.py`, sem dependências de pip
 - **Web/PWA:** [jogar pelo navegador](https://chimpi-construcoes.luckyemu1.chatgpt.site)
 
