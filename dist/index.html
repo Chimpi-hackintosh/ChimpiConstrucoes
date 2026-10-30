@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>ChimpiConstruções — seu mundo, sua obra</title>
+  <meta name="description" content="Seu mundo, sua obra. Construa casas em 3D, crie seu personagem e descubra a energia solar no ChimpiConstruções.">
+  <meta name="theme-color" content="#254d3c"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icon-192.png"><link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <canvas id="world" aria-label="Mundo de construção 3D"></canvas>
+  <div id="rendererError" class="renderer-error hidden"><i data-lucide="monitor"></i><h2 data-t="webglTitle"></h2><p data-t="webglBody"></p></div>
+  <section id="mainMenu" class="main-menu">
+    <header class="menu-header">
+      <a class="brand" href="./" aria-label="ChimpiConstruções"><img src="./icon.svg" alt="" width="44" height="44"><span>chimpi<b>construções</b></span></a>
+      <div class="header-right"><span class="online-dot"></span><span data-t="yourWorld"></span><button class="icon-btn" id="menuSettings" data-title="settings" aria-label="Configurações"><i data-lucide="settings-2"></i></button></div>
+    </header>
+    <div class="menu-copy">
+      <div class="eyebrow"><span></span><span data-t="creativeSandbox"></span></div>
+      <h1><span data-t="hero1"></span><br><span data-t="hero2"></span><br><em data-t="hero3"></em><svg class="scribble" viewBox="0 0 230 15" aria-hidden="true"><path d="M3 10 Q80 0 225 6 M18 14 Q100 5 213 10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></h1>
+      <p class="intro" data-t="intro"></p>
+      <div class="choose-label"><span data-t="howBuild"></span><span class="mini-label">01 / 02</span></div>
+      <div class="mode-options" role="group" aria-label="Modo de jogo">
+        <button class="mode-card selected" data-mode="beginner" aria-pressed="true"><span class="mode-icon"><i data-lucide="sprout"></i></span><strong data-t="beginner"></strong><small data-t="withGuide"></small><span class="radio-mark"></span></button>
+        <button class="mode-card" data-mode="pro" aria-pressed="false"><span class="mode-icon"><i data-lucide="hard-hat"></i></span><strong data-t="pro"></strong><small data-t="withoutGuide"></small><span class="radio-mark"></span></button>
+      </div>
+      <button id="playButton" class="primary play-button"><i data-lucide="play" fill="currentColor"></i><span data-t="startBuilding"></span><i data-lucide="arrow-up-right"></i></button>
+      <button id="continueButton" class="continue-button hidden"><i data-lucide="folder-open"></i><span data-t="continueWorld"></span><i data-lucide="arrow-right"></i></button>
+      <div class="secondary-actions"><button id="menuAvatar"><i data-lucide="user-round-pen"></i><span data-t="myCharacter"></span></button><span></span><button id="menuWorlds"><i data-lucide="folders"></i><span data-t="myWorlds"></span></button></div>
+      <div class="menu-note"><i data-lucide="sparkles"></i><span data-t="menuNote"></span></div>
+    </div>
+    <div class="scene-badge"><i data-lucide="sun"></i><div><strong data-t="solarReady"></strong><span data-t="cleanEnergy"></span></div><span class="badge-check">✓</span></div>
+    <div class="project-caption"><span class="project-number">01</span><div><span class="eyebrow" data-t="nextProject"></span><h2>Casa Aurora <span>↗</span></h2><p data-t="projectInfo"></p></div><button id="demoButton" class="round-btn" data-title="exploreDemo" aria-label="Explorar casa de exemplo"><i data-lucide="arrow-up-right"></i></button></div>
+    <footer class="menu-footer"><span>CHIMPI STUDIO <b>© 2026</b></span><div><i data-lucide="monitor"></i><i data-lucide="smartphone"></i><span data-t="anywhere"></span></div><span>V 1.1 <span class="version-tag" data-t="playable"></span></span></footer>
+  </section>
+  <main id="gameHUD" class="game-hud hidden">
+    <header class="hud-header glass">
+      <div class="hud-brand"><img src="./icon.svg" alt="" width="35" height="35"><div><strong id="worldName"></strong><span id="modeLabel"></span></div></div>
+      <button id="timeButton" class="time-chip" data-title="changeTime"><i data-lucide="sun"></i><span id="timeLabel">10:30</span></button>
+      <div class="hud-buttons"><span id="saveStatus" class="save-status"><i data-lucide="cloud-check"></i><span data-t="saved"></span></span><button id="energyButton" class="energy-pill"><i data-lucide="zap"></i><span data-t="energy"></span><b id="energyMini">0 W</b></button><button id="avatarButton" class="icon-btn" data-title="myCharacter" aria-label="Personagem"><i data-lucide="user-round"></i></button><button id="pauseButton" class="icon-btn pause-btn" data-title="pause" aria-label="Pausar"><i data-lucide="pause"></i></button></div>
+    </header>
+    <div class="activity-switch glass" role="group" aria-label="Construir ou jogar" data-activity-label>
+      <button id="buildMode" aria-pressed="true"><i data-lucide="hammer"></i><span data-t="buildMode"></span><kbd>B</kbd></button>
+      <button id="playMode" aria-pressed="false"><i data-lucide="play"></i><span data-t="playMode"></span><kbd>P</kbd></button>
+    </div>
+    <aside class="explore-guide glass"><span class="eyebrow" data-t="exploreEyebrow"></span><h2 data-t="exploreTitle"></h2><p data-t="exploreBody"></p><div><kbd>WASD</kbd><span data-t="walk"></span><kbd>G</kbd><span data-t="doors"></span></div></aside>
+    <div class="play-interaction"><button id="interactButton" class="glass"><i data-lucide="door-open"></i><span id="interactLabel"></span><kbd>G</kbd></button><span data-t="playSafe"></span></div>
+    <aside id="tutorialCard" class="tutorial-card glass">
+      <button id="collapseTutorial" class="tutorial-title"><span><span class="tiny-dot"></span><span data-t="yourFirstHouse"></span></span><i data-lucide="chevron-up"></i></button>
+      <div id="tutorialBody"><div class="tutorial-progress"><span id="stageNumber"></span><div><span id="stageProgress"></span></div></div><div class="stage-icon" id="stageIcon"></div><h2 id="stageTitle"></h2><p id="stageDescription"></p><button id="tutorialAction" class="primary"></button><div id="stageTip" class="stage-tip"></div><button id="showSteps" class="text-button"><span data-t="seeSteps"></span><i data-lucide="list-checks"></i></button></div>
+    </aside>
+    <div class="view-controls glass"><button id="cameraButton" data-title="camera" aria-label="Alterar câmera"><i data-lucide="orbit"></i><span id="cameraLabel" data-t="buildView"></span></button><span></span><button id="rotateCamera" data-title="rotateView" aria-label="Girar câmera"><i data-lucide="rotate-cw"></i></button><button id="zoomIn" data-title="zoomIn" aria-label="Aproximar"><i data-lucide="plus"></i></button><button id="zoomOut" data-title="zoomOut" aria-label="Afastar"><i data-lucide="minus"></i></button></div>
+    <div id="crosshair" class="crosshair hidden">+</div>
+    <div id="blockLabel" class="block-label hidden"></div>
+    <div id="buildInfo" class="build-info glass"><i data-lucide="box"></i><span id="blockCount">0</span><span data-t="blocks"></span><span class="divider"></span><span id="positionLabel">X 0 · Y 0 · Z 0</span></div>
+    <div class="tool-dock glass"><button id="placeTool" class="active" data-title="placeTool" aria-label="Construir"><i data-lucide="hammer"></i></button><button id="removeTool" data-title="removeTool" aria-label="Remover"><i data-lucide="pickaxe"></i></button><button id="rotateBlock" data-title="rotateBlock" aria-label="Girar bloco"><i data-lucide="rotate-3d"></i></button><button id="useDoor" data-title="useDoor" aria-label="Usar porta"><i data-lucide="door-open"></i></button><button id="undoButton" data-title="undo" aria-label="Desfazer"><i data-lucide="undo-2"></i></button><span></span><button id="layerUp" data-title="layerUp" aria-label="Subir camada"><i data-lucide="chevron-up"></i></button><b id="layerLabel">0</b><button id="layerDown" data-title="layerDown" aria-label="Descer camada"><i data-lucide="chevron-down"></i></button></div>
+    <div class="bottom-center"><div id="categoryBar" class="category-bar"><button data-category="structure" class="active"><i data-lucide="brick-wall"></i><span data-t="structure"></span></button><button data-category="finish"><i data-lucide="paint-roller"></i><span data-t="finish"></span></button><button data-category="energy"><i data-lucide="zap"></i><span data-t="energy"></span></button><button data-category="decor"><i data-lucide="armchair"></i><span data-t="decor"></span></button></div><div class="hotbar glass"><div id="materialSlots"></div><button id="inventoryButton" class="inventory-btn" data-title="inventory" aria-label="Inventário"><i data-lucide="grid-2x2"></i><kbd>E</kbd></button></div><div class="selected-material"><span id="selectedName"></span><span class="material-separator">/</span><span data-t="unlimited"></span></div></div>
+    <div class="controls-hint"><span id="movementHint"><kbd>W A S D</kbd> <span data-t="walk"></span></span><span><kbd>↔</kbd> <span id="lookHint" data-t="dragRotate"></span></span><button id="helpButton"><i data-lucide="circle-help"></i><span data-t="controls"></span></button></div>
+    <div id="touchControls" class="touch-controls"><div id="joystick" class="joystick"><div id="joystickKnob"></div></div><div class="touch-actions"><button id="jumpButton" data-title="jump" aria-label="Pular"><i data-lucide="arrow-up"></i></button><button id="touchBuild" class="primary" data-title="placeTool" aria-label="Construir"><i data-lucide="hammer"></i></button><button id="touchUse" data-title="useDoor" aria-label="Usar porta"><i data-lucide="door-open"></i></button><button id="touchRemove" data-title="removeTool" aria-label="Remover"><i data-lucide="pickaxe"></i></button></div></div>
+  </main>
+  <div id="modalBackdrop" class="modal-backdrop hidden"><section id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><header class="modal-header"><div><span id="modalEyebrow" class="eyebrow"></span><h2 id="modalTitle"></h2></div><button id="closeModal" class="icon-btn" data-title="close" aria-label="Fechar"><i data-lucide="x"></i></button></header><div id="modalContent"></div></section></div>
+  <div id="toast" class="toast hidden" role="status"></div>
+  <input id="importFile" type="file" accept=".json,application/json" class="hidden">
+  <script src="./vendor/lucide.min.js"></script><script type="module" src="./app.js"></script>
+</body>
+</html>
