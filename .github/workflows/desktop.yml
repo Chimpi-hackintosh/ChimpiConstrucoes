@@ -1,0 +1,58 @@
+name: Chimpi-hackintosh · Compilar desktop
+on:
+  push:
+    paths:
+      - 'desktop/**'
+      - 'dist/**'
+      - 'packaging/**'
+      - 'requirements-build.txt'
+      - '.github/workflows/desktop.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    name: ${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            label: Linux-x64
+          - os: windows-latest
+            label: Windows-x64
+          - os: macos-latest
+            label: macOS
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar compilador
+        run: python -m pip install -r requirements-build.txt
+      - name: Instalar NSIS
+        if: runner.os == 'Windows'
+        run: choco install nsis --no-progress --yes
+      - name: Verificar código
+        run: python -m unittest discover -s tests -p "test_*.py"
+      - name: Compilar Windows e instalador
+        if: runner.os == 'Windows'
+        run: python packaging/build_desktop.py --installer
+      - name: Compilar aplicativo
+        if: runner.os != 'Windows'
+        run: python packaging/build_desktop.py
+      - name: Executar binário e testar persistência
+        run: python packaging/smoke_desktop.py
+      - name: Empacotar
+        run: python packaging/package_desktop.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ChimpiConstrucoes-${{ matrix.label }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            build-output/*.zip
+            build-output/*.tar.gz
+            build-output/*Setup.exe

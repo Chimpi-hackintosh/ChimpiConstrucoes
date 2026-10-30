@@ -1,0 +1,2 @@
+# Only needed for building desktop executables, not the Python portable edition
+pyinstaller>=6,<7
