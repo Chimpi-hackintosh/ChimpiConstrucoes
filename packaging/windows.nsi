@@ -4,7 +4,7 @@ Unicode true
 Name "ChimpiConstruções"
 Icon "..\dist\icon.ico"
 UninstallIcon "..\dist\icon.ico"
-OutFile "..\build-output\ChimpiConstrucoes-1.0.0-Windows-Setup.exe"
+OutFile "..\build-output\ChimpiConstrucoes-1.1.0-Windows-Setup.exe"
 InstallDir "$PROGRAMFILES64\SnoopyOS Company\ChimpiConstruções"
 InstallDirRegKey HKLM "Software\SnoopyOS Company\ChimpiConstrucoes" "InstallDir"
 RequestExecutionLevel admin
@@ -44,7 +44,7 @@ Section "ChimpiConstruções" Main
   WriteRegStr HKLM "Software\SnoopyOS Company\ChimpiConstrucoes" "InstallDir" "$INSTDIR"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ChimpiConstrucoes" "DisplayName" "ChimpiConstruções"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ChimpiConstrucoes" "Publisher" "SnoopyOS Company"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ChimpiConstrucoes" "DisplayVersion" "1.0.0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ChimpiConstrucoes" "DisplayVersion" "1.1.0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\ChimpiConstrucoes" "UninstallString" '$"$INSTDIR\Uninstall.exe$"'
 SectionEnd
 Section /o "$(DesktopName)" Desktop

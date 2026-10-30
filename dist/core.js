@@ -1,4 +1,4 @@
-export const VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 export const LIMITS = { x: 13, z: 11, height: 12, blocks: 5000 };
 export const DEFAULT_AVATAR = {name:'Construtor',skin:'#bc8057',hair:'#30251e',shirt:'#436f54',pants:'#283e45',hat:'#eeb94a',hairStyle:'short',headwear:'helmet',outfit:'overalls',size:1,width:1};
 export const DEFAULT_SETTINGS = {quality:'balanced',sound:true,volume:.35,dayMinutes:12,cycle:true,language:'auto'};
@@ -35,15 +35,16 @@ export const STAGES = [
 export const key=b=>`${b.x},${b.y},${b.z}`;
 export function validBlock(b) {return b && [b.x,b.y,b.z].every(Number.isInteger) && Math.abs(b.x)<=LIMITS.x && Math.abs(b.z)<=LIMITS.z && b.y>=0 && b.y<LIMITS.height && !!MATERIAL_MAP[b.type];}
 export function addBlock(blocks,b){if(!validBlock(b)||blocks.length>=LIMITS.blocks||blocks.some(a=>key(a)===key(b)))return false;blocks.push({...b,rot:((b.rot||0)%4+4)%4});return true;}
-export function createWorld(name='Minha primeira casa',mode='beginner') {return {version:VERSION,id:globalThis.crypto?.randomUUID?.()||`world-${Date.now()}`,name:name.slice(0,40),mode,blocks:[],stage:0,clock:10.5,day:1,energy:{...DEFAULT_ENERGY},player:{x:-5,z:5,y:0},created:Date.now(),updated:Date.now()};}
+export function createWorld(name='Minha primeira casa',mode='beginner') {return {version:VERSION,id:globalThis.crypto?.randomUUID?.()||`world-${Date.now()}`,name:name.slice(0,40),mode,activity:'build',blocks:[],stage:0,clock:10.5,day:1,energy:{...DEFAULT_ENERGY},player:{x:0,z:5.5,y:0,yaw:Math.PI,viewYaw:0,lookPitch:0},created:Date.now(),updated:Date.now()};}
 export function validateWorld(raw){
  if(!raw||!Array.isArray(raw.blocks)||!['beginner','pro'].includes(raw.mode)||raw.blocks.length>LIMITS.blocks)throw new Error('invalidWorld');
  const w=createWorld(typeof raw.name==='string'?raw.name:'ChimpiConstruções',raw.mode),seen=new Set();
- for(const b of raw.blocks){if(!validBlock(b)||seen.has(key(b)))throw new Error('invalidWorld');seen.add(key(b));w.blocks.push({...b,rot:Number.isInteger(b.rot)?b.rot%4:0});}
+ for(const b of raw.blocks){if(!validBlock(b)||seen.has(key(b)))throw new Error('invalidWorld');seen.add(key(b));const clean={...b,rot:Number.isInteger(b.rot)?b.rot%4:0};if(b.type!=='door'||typeof b.open!=='boolean')delete clean.open;w.blocks.push(clean);}
+ w.activity=raw.activity==='play'?'play':'build';
  w.id=typeof raw.id==='string'?raw.id.slice(0,80):w.id;w.stage=Math.min(8,Math.max(0,Math.trunc(Number(raw.stage)||0)));w.clock=Number.isFinite(raw.clock)?((raw.clock%24)+24)%24:10.5;
  w.day=Number.isFinite(raw.day)?Math.max(1,Math.floor(raw.day)):1;w.updated=Number(raw.updated)||Date.now();
  if(raw.energy){for(const k of ['master','grid','lights','tv','trip'])if(typeof raw.energy[k]==='boolean')w.energy[k]=raw.energy[k];w.energy.breaker=[250,500,1000,2000].includes(raw.energy.breaker)?raw.energy.breaker:500;w.energy.charge=Math.max(0,Math.min(50000,Number(raw.energy.charge)||0));}
- if(raw.player&&[raw.player.x,raw.player.z,raw.player.y].every(Number.isFinite))w.player={x:Math.max(-13,Math.min(13,raw.player.x)),z:Math.max(-11,Math.min(11,raw.player.z)),y:Math.max(0,Math.min(12,raw.player.y))};
+ if(raw.player&&[raw.player.x,raw.player.z,raw.player.y].every(Number.isFinite)){w.player={...w.player,x:Math.max(-13,Math.min(13,raw.player.x)),z:Math.max(-11,Math.min(11,raw.player.z)),y:Math.max(0,Math.min(12,raw.player.y))};for(const k of ['yaw','viewYaw','lookPitch'])if(Number.isFinite(raw.player[k]))w.player[k]=k==='lookPitch'?Math.max(-1.25,Math.min(1.25,raw.player[k])):raw.player[k]%(Math.PI*2);}
  return w;
 }
 function put(a,x,y,z,type,rot=0){a.push({x,y,z,type,rot});}

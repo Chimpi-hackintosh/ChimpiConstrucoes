@@ -35,6 +35,11 @@ jobs:
       - name: Instalar NSIS
         if: runner.os == 'Windows'
         run: choco install nsis --no-progress --yes
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar exploração e regras do jogo
+        run: node --test tests/*.test.mjs
       - name: Verificar código
         run: python -m unittest discover -s tests -p "test_*.py"
       - name: Compilar Windows e instalador

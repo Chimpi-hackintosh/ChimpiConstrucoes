@@ -8,12 +8,12 @@ import os
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = Path(os.environ.get("CHIMPI_RELEASE_DIR", ROOT / "build-output"))
 OUTPUT.mkdir(parents=True, exist_ok=True)
-NAME = "ChimpiConstrucoes-1.0.0-Multiplataforma"
+NAME = "ChimpiConstrucoes-1.1.0-Multiplataforma"
 
 with tempfile.TemporaryDirectory(prefix="chimpi-release-") as tmp:
     release = Path(tmp) / NAME
     release.mkdir()
-    (release / "LEIA-ME.md").write_text("""# ChimpiConstruções 1.0
+    (release / "LEIA-ME.md").write_text("""# ChimpiConstruções 1.1
 
 Jogo 3D de construção de casas com modos Iniciante e Pro, personagem personalizável, pausa, salvamento e energia solar
 
@@ -42,7 +42,7 @@ O motor é JavaScript com WebGL e alternativa 3D por Canvas — Python inicia o 
 
 ## Controles
 
-WASD anda, Espaço pula, F muda câmera, R gira o bloco, G abre a porta apontada, E abre os materiais e Esc pausa — na vista de construção, clique esquerdo constrói e direito remove — na primeira pessoa os botões são invertidos, como em jogos de blocos
+B ou Construir abre a edição: clique esquerdo constrói, direito remove, R gira e E abre materiais — P ou Play permite explorar: WASD anda, Espaço pula, Shift corre, F alterna câmera e G/E abre portas próximas — Esc pausa — no Play os cliques preservam a casa
 
 No celular use o controle virtual, arraste a cena para olhar e use martelo, picareta, porta e seta para agir — os botões laterais controlam rotação e camadas
 

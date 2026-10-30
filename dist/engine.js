@@ -1,4 +1,5 @@
 import {MATERIAL_MAP} from './core.js';
+import {cameraClearance} from './physics.js';
 const v3={sub:(a,b)=>a.map((v,i)=>v-b[i]),cross:(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]],unit:a=>{let l=Math.hypot(...a)||1;return a.map(v=>v/l)},dot:(a,b)=>a.reduce((s,v,i)=>s+v*b[i],0)};
 function multiply(a,b){const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)for(let k=0;k<4;k++)o[c*4+r]+=a[k*4+r]*b[c*4+k];return o;}
 function invert(a){const b=Array.from({length:4},(_,r)=>[...Array.from({length:4},(_,c)=>a[c*4+r]),...Array.from({length:4},(_,c)=>r===c?1:0)]);for(let i=0;i<4;i++){let row=i;for(let j=i+1;j<4;j++)if(Math.abs(b[j][i])>Math.abs(b[row][i]))row=j;[b[i],b[row]]=[b[row],b[i]];const d=b[i][i]||1e-10;for(let c=0;c<8;c++)b[i][c]/=d;for(let r=0;r<4;r++)if(r!==i){const k=b[r][i];for(let c=0;c<8;c++)b[r][c]-=b[i][c]*k;}}return new Float32Array(Array.from({length:16},(_,i)=>b[i%4][Math.floor(i/4)+4]));}
@@ -15,8 +16,8 @@ class Geometry{
  cylinder(x,y,z,r,h,color,sides=8){for(let i=0;i<sides;i++){const a=i/sides*Math.PI*2,b=(i+1)/sides*Math.PI*2,p=[x+Math.cos(a)*r,y-h/2,z+Math.sin(a)*r],q=[x+Math.cos(b)*r,y-h/2,z+Math.sin(b)*r],s=[p[0],y+h/2,p[2]],t=[q[0],y+h/2,q[2]];this.tri(p,s,t,color);this.tri(p,t,q,color);this.tri([x,y+h/2,z],t,s,color);}}
 }
 function model(g,b,on=true){
- const {x,y,z,type}=b,Y=y+.5,c=MATERIAL_MAP[type]?.color||'#aaaaaa',r=((b.rot||0)+(b.open?1:0))*Math.PI/2;
- const box=(dx,dy,dz,w,h,d,col=c)=>{const p=rotate([dx,dy,dz],0,r,0);g.box(x+p[0],Y+p[1],z+p[2],w,h,d,col,0,r);};
+ const {x,y,z,type}=b,Y=y+.5,c=MATERIAL_MAP[type]?.color||'#aaaaaa',r=((b.rot||0)+(b.open?1:0))*Math.PI/2,hinge=type==='door'&&b.open?rotate([-.41,0,-.4],0,(b.rot||0)*Math.PI/2):[0,0,0];
+ const box=(dx,dy,dz,w,h,d,col=c)=>{const p=rotate([dx,dy,dz],0,r,0);g.box(x+p[0]+hinge[0],Y+p[1],z+p[2]+hinge[2],w,h,d,col,0,r);};
  if(['brick','concrete','pillar','beam','plaster','sage','sand','floor','wood','stone','grass','water','glass','black'].includes(type)){
   box(0,0,0,.99,.99,.99);
   if(type==='brick'){for(const sy of[-.33,0,.33]){box(0,sy,.5,.99,.026,.008,'#d6ab83');box(.5,sy,0,.008,.026,.99,'#d6ab83');}box(0,.17,.501,.025,.31,.008,'#d6ab83');box(-.25,-.17,.501,.025,.31,.008,'#d6ab83');box(.501,.17,0,.008,.31,.025,'#d6ab83');}
@@ -87,7 +88,8 @@ export class WorldRenderer{
  matrix(player){let eye,target;
   if(this.mode==='first'&&!this.menu){eye=[player.x,player.y+1.65,player.z];const p=Math.max(-1.25,Math.min(1.25,this.lookPitch||0));target=[eye[0]-Math.sin(this.yaw)*Math.cos(p),eye[1]+Math.sin(p),eye[2]-Math.cos(this.yaw)*Math.cos(p)];}
   else{target=this.mode==='follow'&&!this.menu?[player.x,player.y+1,player.z]:this.target;const d=this.menu?(this.canvas.clientWidth<750?31:29):this.distance;eye=[target[0]+Math.sin(this.yaw)*Math.cos(this.pitch)*d,target[1]+Math.sin(this.pitch)*d,target[2]+Math.cos(this.yaw)*Math.cos(this.pitch)*d];}
-  const p=perspective(.67,this.canvas.width/this.canvas.height,.08,150,this.menu&&this.canvas.clientWidth>=850?-.39:0);this.vp=multiply(p,lookAt(eye,target));this.inverse=invert(this.vp);this.eye=eye;return this.vp;
+  if(this.mode==='follow'&&!this.menu)eye=cameraClearance(this.blocks,target,eye);
+  const p=perspective(this.mode==='first'&&!this.menu?1.1:.67,this.canvas.width/this.canvas.height,.08,150,this.menu&&this.canvas.clientWidth>=850?-.39:0);this.vp=multiply(p,lookAt(eye,target));this.inverse=invert(this.vp);this.eye=eye;return this.vp;
  }
  drawBuffer(buffer,count,dynamic=false){const gl=this.gl;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);for(let i=0;i<3;i++){gl.enableVertexAttribArray(this.attr[i]);gl.vertexAttribPointer(this.attr[i],3,gl.FLOAT,false,36,i*12);}gl.drawArrays(gl.TRIANGLES,0,count);}
  render({player,avatar,time,day=1,ghost=null,moving=false}){
@@ -110,19 +112,24 @@ export class SoftwareRenderer{
  constructor(canvas){this.canvas=canvas;this.ctx=canvas.getContext('2d',{alpha:false});if(!this.ctx)throw Error('Canvas');this.yaw=.64;this.pitch=.65;this.distance=26;this.target=[0,2,0];this.menu=true;this.mode='orbit';this.blocks=[];this.quality='balanced';this.on=true;this.time=0;this.environment=new Geometry();this.makeEnvironment();this.resize();this.lastFrame=-1;this.geometry=[];}
  resize(){const w=Math.round(this.canvas.clientWidth),h=Math.round(this.canvas.clientHeight);if(this.canvas.width!==w||this.canvas.height!==h){this.canvas.width=w;this.canvas.height=h;}}
  update(blocks,on=true){this.blocks=blocks;this.on=on;const g=new Geometry();g.vertices=this.environment.vertices.slice();for(const b of blocks)model(g,b,on);this.geometry=g.vertices;this.lastFrame=-1;}
- projectGeometry(vertices,day){const a=vertices,polys=[],m=this.vp,W=this.canvas.width,H=this.canvas.height,light=v3.unit([-.6,1,.8]),eye=this.eye;
-  for(let i=0;i<a.length;i+=27){const normal=a.slice(i+3,i+6),view=[eye[0]-a[i],eye[1]-a[i+1],eye[2]-a[i+2]];if(v3.dot(normal,view)<-.001)continue;const pts=[];let depth=0,skip=false;
-   for(const offset of[0,9,18]){const x=a[i+offset],y=a[i+offset+1],z=a[i+offset+2],w=m[3]*x+m[7]*y+m[11]*z+m[15];if(w<.05){skip=true;break;}const p=transform(m,[x,y,z,1]);pts.push([(p[0]+1)*W/2,(1-p[1])*H/2]);depth+=p[2]/3;}
-   if(skip||pts.every(p=>p[0]<0)||pts.every(p=>p[0]>W)||pts.every(p=>p[1]<0)||pts.every(p=>p[1]>H))continue;
-   const k=.68+Math.max(0,v3.dot(normal,light))*.34,colors=a.slice(i+6,i+9).map((v,j)=>Math.round(Math.min(255,v*k*([.35,.46,.58][j]*(1-day)+day)*255)));
+ projectGeometry(vertices,day){
+  const a=vertices,polys=[],m=this.vp,W=this.canvas.width,H=this.canvas.height,light=v3.unit([-.6,1,.8]),eye=this.eye;
+  const clip=p=>{let out=[];for(let i=0;i<p.length;i++){const v=p[i],u=p[(i+p.length-1)%p.length],dv=v[2]+v[3],du=u[2]+u[3];if((dv>=0)!==(du>=0)){const t=du/(du-dv);out.push(u.map((n,j)=>n+(v[j]-n)*t));}if(dv>=0)out.push(v);}return out;};
+  for(let i=0;i<a.length;i+=27){
+   const normal=a.slice(i+3,i+6),view=[eye[0]-a[i],eye[1]-a[i+1],eye[2]-a[i+2]];if(v3.dot(normal,view)<-.001)continue;
+   const raw=[0,9,18].map(o=>{const x=a[i+o],y=a[i+o+1],z=a[i+o+2];return [0,1,2,3].map(r=>m[r]*x+m[4+r]*y+m[8+r]*z+m[12+r]);}),polygon=clip(raw);
+   if(polygon.length<3)continue;
+   const pts=polygon.map(p=>[(p[0]/p[3]+1)*W/2,(1-p[1]/p[3])*H/2]);
+   if(pts.every(p=>p[0]<0)||pts.every(p=>p[0]>W)||pts.every(p=>p[1]<0)||pts.every(p=>p[1]>H))continue;
+   const depth=polygon.reduce((sum,p)=>sum+p[2]/p[3],0)/polygon.length,k=.68+Math.max(0,v3.dot(normal,light))*.34,colors=a.slice(i+6,i+9).map((v,j)=>Math.round(Math.min(255,v*k*([.35,.46,.58][j]*(1-day)+day)*255)));
    polys.push({points:pts,depth,color:`rgb(${colors.join(',')})`});
   }return polys;
  }
  render({player,avatar,time,day=1,ghost=null,moving=false}){
   if(time-this.lastFrame<1/(this.quality==='low'?14:22))return;this.lastFrame=time;this.resize();this.matrix(player);const c=this.ctx,night=Math.max(.05,Math.min(1,day)),bg=rgb('#e5ecd9').map(v=>Math.round(v*(.45+night*.55)*255));c.fillStyle=`rgb(${bg.join(',')})`;c.fillRect(0,0,this.canvas.width,this.canvas.height);
   const g=new Geometry();if(this.mode!=='first'||this.menu)this.avatar(g,player,avatar,time,moving);const p=[...this.projectGeometry(this.geometry,night),...this.projectGeometry(g.vertices,night)];p.sort((a,b)=>b.depth-a.depth);
-  for(const v of p){c.beginPath();c.moveTo(...v.points[0]);c.lineTo(...v.points[1]);c.lineTo(...v.points[2]);c.closePath();c.fillStyle=v.color;c.fill();}
-  if(ghost){const h=new Geometry();h.box(ghost.x,ghost.y+.5,ghost.z,1.015,1.015,1.015,ghost.remove?'#e07756':'#e0edac');c.globalAlpha=.38;for(const v of this.projectGeometry(h.vertices,1)){c.beginPath();c.moveTo(...v.points[0]);c.lineTo(...v.points[1]);c.lineTo(...v.points[2]);c.closePath();c.fillStyle=v.color;c.fill();c.strokeStyle=ghost.remove?'#b45b46':'#63814b';c.lineWidth=.8;c.stroke();}c.globalAlpha=1;}
+  for(const v of p){c.beginPath();c.moveTo(...v.points[0]);for(const p of v.points.slice(1))c.lineTo(...p);c.closePath();c.fillStyle=v.color;c.fill();}
+  if(ghost){const h=new Geometry();h.box(ghost.x,ghost.y+.5,ghost.z,1.015,1.015,1.015,ghost.remove?'#e07756':'#e0edac');c.globalAlpha=.38;for(const v of this.projectGeometry(h.vertices,1)){c.beginPath();c.moveTo(...v.points[0]);for(const p of v.points.slice(1))c.lineTo(...p);c.closePath();c.fillStyle=v.color;c.fill();c.strokeStyle=ghost.remove?'#b45b46':'#63814b';c.lineWidth=.8;c.stroke();}c.globalAlpha=1;}
  }
 }
 for(const name of['makeEnvironment','avatar','matrix','ray','pick'])SoftwareRenderer.prototype[name]=WorldRenderer.prototype[name];

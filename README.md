@@ -1,16 +1,19 @@
-# ChimpiConstruções
+# ChimpiConstruções 1.1
 
 Simulador 3D de construção de casas de **Chimpi-hackintosh / SnoopyOS Company**
 
 - **Iniciante:** tutorial com oito etapas, da fundação ao sistema solar
 - **Pro:** construção livre sem tutorial, com materiais ilimitados
-- Personagem personalizável, três câmeras, construção por blocos, pausa e salvamento
+- **Construir:** coloque e remova blocos, decore a casa e acompanhe o tutorial
+- **Play · Explorar:** entre na casa em primeira ou terceira pessoa, abra portas, caminhe e pule
+- Alterne entre Construir e Play no mesmo mundo, preservando a casa e sua posição
+- Personagem personalizável, pausa e salvamento automático
 - Painéis solares, bateria, bicicleta geradora, consumo, rede elétrica e disjuntor
 - Português e inglês com idioma automático e opção manual
 
 ## Downloads e builds
 
-As compilações ficam na aba **Actions**, no resultado **Chimpi-hackintosh · Compilar desktop** — abra a execução concluída e baixe o artefato do seu sistema
+As compilações ficam na aba **Actions**, nos resultados **Chimpi-hackintosh · Compilar desktop** e **Chimpi-hackintosh · Compilar celular** — abra a execução concluída e baixe o artefato do seu sistema
 
 - **Windows x64:** EXE com runtime incluído, ZIP e instalador NSIS
 - **Linux x64:** binário com runtime incluído, distribuído em TAR.GZ
@@ -45,3 +48,15 @@ python -m unittest discover -s tests -p 'test_*.py'
 ```
 
 Os ícones Lucide e a respectiva licença estão incluídos — os vídeos enviados como referência não são redistribuídos
+
+## Construir e Play
+
+Os modos Iniciante e Pro definem o tutorial; Construir e Play definem o que você faz no mundo
+
+- **B / Construir:** câmera da obra, clique para colocar, clique direito para remover, E abre materiais, R gira blocos e Ctrl+Z desfaz
+- **P / Play · Explorar:** WASD ou setas para andar, arraste para olhar, G ou E para abrir/fechar portas próximas, Espaço pula e Shift corre
+- **F no Play:** alterna primeira e terceira pessoa; a câmera acompanha o personagem e evita atravessar paredes
+- **Celular:** toque no modo no topo; use o controle esquerdo para andar, arraste a cena para olhar e use os botões de porta e pulo
+- **Pausa:** Esc ou botão de pausa; retome no mesmo modo ou troque para Construir/Play pelo menu
+
+A casa de exemplo já abre no Play, do lado de fora da entrada — aproxime-se da porta e abra para entrar — os degraus de um bloco são automáticos — no Play os cliques preservam os blocos da casa
