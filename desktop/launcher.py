@@ -15,7 +15,7 @@ import urllib.request
 import webbrowser
 
 APP_NAME = "ChimpiConstruções"
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 DEFAULT_PORT = 18747
 
 
@@ -238,3 +238,4 @@ def run(expected_platform: str | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(run())
+
