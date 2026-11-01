@@ -12,3 +12,5 @@ jobs:
         with:
           node-version: '22'
       - run: node --test tests/support.test.cjs
+      - name: Verify translated table and notice in Chrome
+        run: python3 tests/verify_support_browser.py dist
