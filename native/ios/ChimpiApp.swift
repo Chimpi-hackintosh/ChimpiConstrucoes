@@ -47,7 +47,14 @@ final class GameController: UIViewController, WKScriptMessageHandler, WKNavigati
     @objc func pauseGame(){web.evaluateJavaScript("(()=>{let h=document.getElementById('gameHUD');let m=document.getElementById('modalBackdrop');if(h&&!h.classList.contains('hidden')&&m&&m.classList.contains('hidden'))document.getElementById('pauseButton').click()})()",completionHandler:nil)}
     func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy)->Void) {
         guard let url=action.request.url else {decisionHandler(.cancel);return}
-        if url.host=="127.0.0.1" {decisionHandler(.allow)} else {decisionHandler(.cancel)}
+        if url.host=="127.0.0.1" {decisionHandler(.allow)} else {
+            if url.scheme=="https", url.host=="github.com", url.path.hasPrefix("/Chimpi-hackintosh/") {
+                UIApplication.shared.open(url)
+            } else if url.scheme=="https", url.host=="chimpi-hackintosh.github.io", url.path=="/ChimpiBlender-Online/support.html" {
+                UIApplication.shared.open(url)
+            }
+            decisionHandler(.cancel)
+        }
     }
     func userContentController(_ controller: WKUserContentController,didReceive message: WKScriptMessage) {
         guard message.name=="exportWorld",message.frameInfo.isMainFrame,message.frameInfo.request.url?.host=="127.0.0.1",let data=message.body as? [String:Any],let content=data["content"] as? String,content.utf8.count<=3_000_000 else {return}

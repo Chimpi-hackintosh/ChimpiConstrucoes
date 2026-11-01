@@ -39,7 +39,7 @@ jobs:
         with:
           node-version: '22'
       - name: Verificar exploração e regras do jogo
-        run: node --test tests/*.test.mjs
+        run: node --test tests/*.test.mjs tests/*.test.cjs
       - name: Verificar código
         run: python -m unittest discover -s tests -p "test_*.py"
       - name: Compilar Windows e instalador

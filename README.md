@@ -60,3 +60,7 @@ Os modos Iniciante e Pro definem o tutorial; Construir e Play definem o que voc�
 - **Pausa:** Esc ou botão de pausa; retome no mesmo modo ou troque para Construir/Play pelo menu
 
 A casa de exemplo já abre no Play, do lado de fora da entrada — aproxime-se da porta e abra para entrar — os degraus de um bloco são automáticos — no Play os cliques preservam os blocos da casa
+
+## Aviso de suporte
+
+Aviso traduzido, data de 04/11/2026, versões e limites de distribuição em [SUPPORT.md](SUPPORT.md)

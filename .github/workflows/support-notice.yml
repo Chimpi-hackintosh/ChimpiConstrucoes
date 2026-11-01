@@ -1,0 +1,14 @@
+name: Check support notice
+on:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  support-notice:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tests/support.test.cjs
