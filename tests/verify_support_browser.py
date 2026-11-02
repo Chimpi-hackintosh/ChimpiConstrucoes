@@ -26,7 +26,7 @@ def main():
         const api=ChimpiSupport;
         if(document.title!=='Apps e suporte')throw Error('Table language');
         if(document.querySelectorAll('#apps tr').length!==13)throw Error('Table rows');
-        if(!document.querySelector('#apps a[href*="/OpenCore-Helper/releases/tag/v3.0.1"]'))throw Error('Official download link');
+        if(!document.querySelector('#apps a[href*="/OpenCore-Helper/releases/tag/v3.0.2"]'))throw Error('Official download link');
         api.show(api.notice('OpenCore-Helper','2.0.0',api.POLICY,new Date('2026-11-01T00:00:00Z'),'pt-BR'));
         if(document.getElementById('chimpi-support-title').textContent!=='Sua versão está prestes a não ser suportada')throw Error('Before cutoff');
         if(document.querySelectorAll('#chimpi-support-notice a').length!==2)throw Error('Update and table buttons');
