@@ -7,7 +7,7 @@ const context = {module: {exports: {}}, URL, AbortController, setTimeout, clearT
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../dist/support-notice.js'), 'utf8'), context);
 const s = context.module.exports;
 test('only a known older installed version gets a notice', () => {
-  for (const v of ['3.0.1', '4.0.0', '3.0.1-build-3', 'bad', null]) assert.equal(s.notice('OpenCore-Helper', v), null);
+  for (const v of ['3.0.2', '4.0.0', '3.0.2-build-3', 'bad', null]) assert.equal(s.notice('OpenCore-Helper', v), null);
   assert.equal(s.notice('ChimpiConstrucoes', '1.0.0'), null);
   assert.equal(s.notice('private', '1.0.0'), null);
   assert.ok(s.notice('OpenCore-Helper', '3.0.0'));
@@ -38,11 +38,11 @@ test('unavailable network falls back without blocking app startup', async () => 
   try { assert.deepEqual(await s.fetchPolicy(), s.POLICY); } finally { global.fetch = fetch; }
 });
 test('web deployment revisions are separate from app release versions', () => {
-  assert.equal(s.notice('ChimpiBlender-Online', '20261101'), null);
+  assert.equal(s.notice('ChimpiBlender-Online', '20261102'), null);
   assert.ok(s.notice('ChimpiBlender-Online', '20261031'));
   const candidate = structuredClone(s.POLICY);
-  candidate.apps['ChimpiBlender-Online'].web_revision = 20261102;
-  assert.ok(s.notice('ChimpiBlender-Online', '20261101', s.checkedPolicy(candidate)));
+  candidate.apps['ChimpiBlender-Online'].web_revision = 20261103;
+  assert.ok(s.notice('ChimpiBlender-Online', '20261102', s.checkedPolicy(candidate)));
   candidate.apps['ChimpiBlender-Online'].url = 'https://evil.test/';
-  assert.equal(s.notice('ChimpiBlender-Online', '20261101', s.checkedPolicy(candidate)), null);
+  assert.equal(s.notice('ChimpiBlender-Online', '20261102', s.checkedPolicy(candidate)), null);
 });
