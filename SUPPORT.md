@@ -8,7 +8,7 @@ Antes dessa data o aviso informa que o suporte está prestes a terminar — depo
 
 O texto explica o risco de falhas sem afirmar que o usuário ou o aplicativo já foi infectado
 
-| Aplicativo | Versão publicada conferida em 01/11/2026 | Mínima |
+| Aplicativo | Versão publicada conferida em 02/11/2026 | Mínima |
 | --- | --- | --- |
 | ChimpiConstruções | Sem Release para download | Ainda sem mínimo de versão publicado |
 
