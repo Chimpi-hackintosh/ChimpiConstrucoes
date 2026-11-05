@@ -74,7 +74,15 @@ class GameHandler(http.server.SimpleHTTPRequestHandler):
         self.assets = assets.resolve()
         super().__init__(*args, directory=str(self.assets), **kwargs)
 
+    def _trusted_host(self):
+        # Restrict browser requests to the loopback address used by this server.
+        # This prevents DNS rebinding websites from reading locally saved worlds.
+        return self.headers.get("Host") == f"127.0.0.1:{self.server.server_port}"
+
     def do_GET(self):
+        if not self._trusted_host():
+            self.send_error(403)
+            return
         if self.path.split("?", 1)[0] == "/api/state":
             try:
                 with self.server.state_lock:
@@ -104,9 +112,24 @@ class GameHandler(http.server.SimpleHTTPRequestHandler):
             return
         super().do_GET()
 
+    def do_HEAD(self):
+        if not self._trusted_host():
+            self.send_error(403)
+            return
+        if self.path.split("?", 1)[0] in ("/api/state", "/health"):
+            self.send_error(405)
+            return
+        resolved = Path(self.translate_path(self.path)).resolve()
+        try:
+            resolved.relative_to(self.assets)
+        except ValueError:
+            self.send_error(403)
+            return
+        super().do_HEAD()
+
     def do_POST(self):
         expected = f"http://127.0.0.1:{self.server.server_port}"
-        if self.headers.get("Host") != f"127.0.0.1:{self.server.server_port}" or self.headers.get("Origin") != expected:
+        if not self._trusted_host() or self.headers.get("Origin") != expected:
             self.send_error(403)
             return
         if self.path != "/api/state" or self.headers.get_content_type() != "application/json":
