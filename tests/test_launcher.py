@@ -56,6 +56,25 @@ class LauncherTest(unittest.TestCase):
             with self.assertRaises(urllib.error.HTTPError):
                 urllib.request.urlopen(self.url + route)
 
+    def test_get_and_head_reject_untrusted_host(self):
+        for route in ("/health", "/api/state", "/app.js"):
+            request = urllib.request.Request(self.url + route, headers={"Host": "outside.example.invalid"})
+            with self.subTest(route=route), self.assertRaises(urllib.error.HTTPError) as caught:
+                urllib.request.urlopen(request)
+            self.assertEqual(caught.exception.code, 403)
+
+        bad_head = urllib.request.Request(self.url + "/app.js", method="HEAD",
+                                          headers={"Host": "outside.example.invalid"})
+        with self.assertRaises(urllib.error.HTTPError) as caught:
+            urllib.request.urlopen(bad_head)
+        self.assertEqual(caught.exception.code, 403)
+
+        with urllib.request.urlopen(urllib.request.Request(self.url + "/app.js", method="HEAD")) as response:
+            self.assertEqual(response.status, 200)
+        with self.assertRaises(urllib.error.HTTPError) as caught:
+            urllib.request.urlopen(urllib.request.Request(self.url + "/api/state", method="HEAD"))
+        self.assertEqual(caught.exception.code, 405)
+
 
 if __name__ == "__main__":
     unittest.main()
