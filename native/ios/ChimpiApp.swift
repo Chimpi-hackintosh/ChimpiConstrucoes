@@ -113,6 +113,10 @@ final class LocalAssets {
         }
     }
     func handle(_ connection:NWConnection,method:String,target:String,headers:[String:String],body:Data) {
+        // Reject rebinding hosts even on read-only requests, not just POST.
+        guard let port=listener.port?.rawValue,headers["host"]=="127.0.0.1:\(port)" else {
+            send(connection,status:403,body:Data());return
+        }
         let path=URLComponents(string:"http://127.0.0.1"+target)?.path ?? "/"
         if path=="/api/state" {
             if method=="GET" {send(connection,body:(try? Data(contentsOf:stateFile)) ?? Data("{}".utf8),mime:"application/json");return}
