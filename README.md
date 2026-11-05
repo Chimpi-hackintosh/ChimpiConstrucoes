@@ -43,7 +43,7 @@ No Windows x64, instale NSIS e use `python packaging/build_desktop.py --installe
 ## Verificações
 
 ```sh
-node --test tests/*.test.mjs
+node --test tests/*.test.mjs tests/*.test.cjs
 python -m unittest discover -s tests -p 'test_*.py'
 ```
 
@@ -60,6 +60,12 @@ Os modos Iniciante e Pro definem o tutorial; Construir e Play definem o que voc�
 - **Pausa:** Esc ou botão de pausa; retome no mesmo modo ou troque para Construir/Play pelo menu
 
 A casa de exemplo já abre no Play, do lado de fora da entrada — aproxime-se da porta e abra para entrar — os degraus de um bloco são automáticos — no Play os cliques preservam os blocos da casa
+
+## Segurança dos mundos locais
+
+O iniciador desktop serve o jogo **somente em 127.0.0.1** e valida o endereço do servidor enviado pelo navegador (cabeçalho Host) antes de permitir leitura de arquivos ou acesso ao estado salvo. Escritas em `/api/state` exigem também a origem local correta; não existe compartilhamento remoto automático dos mundos.
+
+Na importação, os blocos são validados, as rotações são normalizadas e campos desconhecidos são descartados. Portas conservam o estado aberto/fechado, sem mudar os mundos existentes.
 
 ## Aviso de suporte
 
