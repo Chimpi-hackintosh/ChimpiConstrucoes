@@ -39,7 +39,7 @@ export function createWorld(name='Minha primeira casa',mode='beginner') {return 
 export function validateWorld(raw){
  if(!raw||!Array.isArray(raw.blocks)||!['beginner','pro'].includes(raw.mode)||raw.blocks.length>LIMITS.blocks)throw new Error('invalidWorld');
  const w=createWorld(typeof raw.name==='string'?raw.name:'ChimpiConstruções',raw.mode),seen=new Set();
- for(const b of raw.blocks){if(!validBlock(b)||seen.has(key(b)))throw new Error('invalidWorld');seen.add(key(b));const clean={...b,rot:Number.isInteger(b.rot)?b.rot%4:0};if(b.type!=='door'||typeof b.open!=='boolean')delete clean.open;w.blocks.push(clean);}
+ for(const b of raw.blocks){if(!validBlock(b)||seen.has(key(b)))throw new Error('invalidWorld');seen.add(key(b));const clean={x:b.x,y:b.y,z:b.z,type:b.type,rot:((Number.isInteger(b.rot)?b.rot:0)%4+4)%4};if(b.type==='door'&&typeof b.open==='boolean')clean.open=b.open;w.blocks.push(clean);}
  w.activity=raw.activity==='play'?'play':'build';
  w.id=typeof raw.id==='string'?raw.id.slice(0,80):w.id;w.stage=Math.min(8,Math.max(0,Math.trunc(Number(raw.stage)||0)));w.clock=Number.isFinite(raw.clock)?((raw.clock%24)+24)%24:10.5;
  w.day=Number.isFinite(raw.day)?Math.max(1,Math.floor(raw.day)):1;w.updated=Number(raw.updated)||Date.now();
