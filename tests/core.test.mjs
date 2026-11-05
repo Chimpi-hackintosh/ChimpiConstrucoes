@@ -23,3 +23,14 @@ test('wiring, switches and breaker limits control appliance power',()=>{
 test('pedal generation is temporary and game time rolls into a new day',()=>{
  const w=createDemo();w.clock=23.99;w.energy.pedal=1;let p=powerStep(w,2,{cycle:true,dayMinutes:4});assert.equal(p.bike,180);assert.equal(w.energy.pedal,0);assert.equal(w.day,2);p=powerStep(w,0);assert.equal(p.bike,0);
 });
+
+test('world import strips unknown block fields while keeping door state',()=>{
+ const w=validateWorld({mode:'pro',blocks:[
+  {x:0,y:0,z:0,type:'door',rot:-1,open:true,extra:{untrusted:'data'}},
+  {x:1,y:0,z:0,type:'brick',rot:6,open:true,note:'ignored'}
+ ]});
+ assert.deepEqual(w.blocks,[
+  {x:0,y:0,z:0,type:'door',rot:3,open:true},
+  {x:1,y:0,z:0,type:'brick',rot:2}
+ ]);
+});
