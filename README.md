@@ -21,7 +21,7 @@ As compilações ficam na aba **Actions**, nos resultados **Chimpi-hackintosh ·
 - **Android:** APK de teste, assinado com chave de desenvolvimento
 - **iOS:** IPA sem assinatura para assinatura posterior, e APP de simulador
 - **Python portátil:** `python desktop/launcher.py`, sem dependências de pip
-- **Web/PWA:** [jogar pelo navegador](https://chimpi-construcoes.luckyemu1.chatgpt.site)
+- **Web/PWA (endereço informado, disponibilidade não verificada):** [abrir endereço](https://chimpi-construcoes.luckyemu1.chatgpt.site)
 
 O jogo usa o navegador do sistema para renderizar a interface local — nos aplicativos desktop compilados, uma janela permite voltar ao jogo ou encerrá-lo — não é necessário instalar Python para executar o pacote compilado
 
