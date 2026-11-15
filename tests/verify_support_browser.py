@@ -25,7 +25,7 @@ def main():
       try {
         const api=ChimpiSupport;
         if(document.title!=='Apps e suporte')throw Error('Table language');
-        if(document.querySelectorAll('#apps tr').length!==13)throw Error('Table rows');
+        if(document.querySelectorAll('#apps tr').length!==18)throw Error('Table rows');
         if(!document.querySelector('#apps a[href*="/OpenCore-Helper/releases/tag/v3.0.2"]'))throw Error('Official download link');
         api.show(api.notice('OpenCore-Helper','2.0.0',api.POLICY,new Date('2026-11-01T00:00:00Z'),'pt-BR'));
         if(document.getElementById('chimpi-support-title').textContent!=='Sua versão está prestes a não ser suportada')throw Error('Before cutoff');
@@ -54,7 +54,7 @@ def main():
             state = getattr(parsed, "attrs", {})
             if run.returncode or state.get("data-support-browser-test") != "passed":
                 raise AssertionError(f"Browser check {width}x{height}: {state.get('data-support-error', 'page did not complete')}\n{run.stderr[-1200:]}")
-            print(f"PASS {width}x{height}: Portuguese table, 13 apps, official links, both date phases, dismiss and viewport")
+            print(f"PASS {width}x{height}: Portuguese table, 18 public entries, official links, both date phases, dismiss and viewport")
 
 
 if __name__ == "__main__":
