@@ -8,7 +8,7 @@ Antes dessa data o aviso informa que o suporte está prestes a terminar — depo
 
 O texto explica o risco de falhas sem afirmar que o usuário ou o aplicativo já foi infectado
 
-| Aplicativo | Versão publicada conferida em 02/11/2026 | Mínima |
+| Aplicativo | Versão publicada conferida em 15/11/2026 | Mínima |
 | --- | --- | --- |
 | ChimpiConstruções | Sem Release para download | Ainda sem mínimo de versão publicado |
 
@@ -40,3 +40,6 @@ O catálogo público não inclui repositórios privados
 Verificações existentes do launcher Python executadas separadamente
 
 Os testes do aviso cobrem versões iguais e mais novas sem alerta, versões antigas com alerta, mudança exata de data, traduções, falha de rede e rejeição de links não oficiais
+
+
+A política embutida foi sincronizada com o catálogo público conferido em 15/11/2026, incluindo a prévia real `v1.1.0-preview.11` do ChimpiCode. O catálogo continua sem dados de projetos privados

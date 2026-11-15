@@ -32,6 +32,10 @@ test('policy refuses untrusted downloads, downgrades, invalid data and unknown p
   assert.deepEqual(s.checkedPolicy(candidate), s.POLICY);
   assert.deepEqual(s.checkedPolicy(null), s.POLICY);
   assert.equal(s.POLICY.apps['private-placeholder'], undefined);
+  assert.equal(s.POLICY.verified_at, '2026-11-15');
+  assert.equal(s.POLICY.apps['ChimpiCode'].minimum, '1.1.0-preview.11');
+  assert.equal(s.POLICY.apps['ChimpiCode'].tag, 'v1.1.0-preview.11');
+  assert.equal(s.POLICY.apps['ChimpiNew'], undefined);
 });
 test('unavailable network falls back without blocking app startup', async () => {
   const fetch = global.fetch; global.fetch = async () => { throw new Error('offline'); };
