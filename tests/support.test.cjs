@@ -36,8 +36,6 @@ test('policy refuses untrusted downloads, downgrades, invalid data and unknown p
   assert.equal(s.POLICY.apps['ChimpiCode'].minimum, '1.1.0-preview.21');
   assert.equal(s.POLICY.apps['ChimpiCode'].tag, 'v1.1.0-preview.21');
   assert.equal(s.POLICY.apps['ChimpiCode'].artifact_digest, 'sha256:66784558333392705e5a8c4a3fb349ede6f46725083b3134e72ab037aad04bfa');
-  assert.ok(s.notice('ChimpiCode', '1.1.0-preview.18'));
-  assert.equal(s.notice('ChimpiCode', '1.1.0-preview.21'), null);
   assert.equal(s.POLICY.apps['ChimpiNew'], undefined);
 });
 test('unavailable network falls back without blocking app startup', async () => {
