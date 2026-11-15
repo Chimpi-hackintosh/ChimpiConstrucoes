@@ -42,4 +42,4 @@ Verificações existentes do launcher Python executadas separadamente
 Os testes do aviso cobrem versões iguais e mais novas sem alerta, versões antigas com alerta, mudança exata de data, traduções, falha de rede e rejeição de links não oficiais
 
 
-A política embutida foi sincronizada com o catálogo público conferido em 15/11/2026, incluindo a prévia real `v1.1.0-preview.18` do ChimpiCode, publicada às 14:05:41 UTC. O catálogo continua sem dados de projetos privados
+A política embutida foi sincronizada com o catálogo público conferido em 15/11/2026, incluindo a prévia real `v1.1.0-preview.21` do ChimpiCode, publicada às 14:22:46 UTC. O catálogo continua sem dados de projetos privados
