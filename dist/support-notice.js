@@ -29,8 +29,13 @@
     } catch (_) { return false; }
   };
   const officialWebsite = (url, repo) => {
-    try { const u = new URL(url); return u.protocol === 'https:' && !u.username && !u.password && !u.search && !u.hash && !u.port && u.hostname === 'chimpi-hackintosh.github.io' && u.pathname === '/' + repo + '/'; }
-    catch (_) { return false; }
+    try {
+      const u = new URL(url), parts = u.pathname.split('/').filter(Boolean);
+      const safe = u.protocol === 'https:' && !u.username && !u.password && !u.search && !u.hash && !u.port;
+      const pages = u.hostname === 'chimpi-hackintosh.github.io' && u.pathname === '/' + repo + '/';
+      const source = u.hostname === 'github.com' && parts.length === 2 && parts[0] === 'Chimpi-hackintosh' && parts[1] === repo;
+      return safe && (pages || source);
+    } catch (_) { return false; }
   };
   function checkedPolicy(candidate) {
     const result = JSON.parse(JSON.stringify(POLICY));
